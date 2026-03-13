@@ -1,51 +1,38 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import {
+  ActionButtonsRow,
+  Content,
+  DraggableTopBar,
+  FloatingNoteTitle,
+  MarkdownEditor,
+  NotePreviewList,
+  RootLayout,
+  Sidebar
+} from '@/components'
+import { useRef } from 'react'
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+const App = () => {
+  const contentContainerRef = useRef<HTMLDivElement>(null)
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  const resetScroll = () => {
+    contentContainerRef.current?.scrollTo(0, 0)
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <>
+      <DraggableTopBar />
+      <RootLayout>
+        <Sidebar className='p-2'>
+          <ActionButtonsRow className='mt-1 flex justify-between' />
+          <NotePreviewList className='mt-3 space-y-1' onSelect={resetScroll} />
+        </Sidebar>
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+        <Content ref={contentContainerRef} className='border-l border-l-white/20 bg-zinc-900/50'>
+          <FloatingNoteTitle className='pt-2' />
+          <MarkdownEditor />
+        </Content>
+      </RootLayout>
+    </>
+  )
 }
 
-export default App;
+export default App

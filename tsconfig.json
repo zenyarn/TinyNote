@@ -13,6 +13,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@renderer/*": ["src/*"],
+      "@shared/*": ["src/shared/*"]
+    },
 
     /* Linting */
     "strict": true,
