@@ -36,3 +36,47 @@
     @apply bg-transparent;
   }
 }
+
+@layer components {
+  .mdxeditor-dark {
+    @apply text-zinc-100;
+  }
+
+  .mdxeditor-dark .cm-editor,
+  .mdxeditor-dark .cm-scroller,
+  .mdxeditor-dark .cm-content,
+  .mdxeditor-dark .cm-line {
+    @apply bg-transparent text-zinc-100;
+  }
+
+  .mdxeditor-dark .cm-sourceView .cm-scroller {
+    @apply px-8 py-5 text-lg leading-relaxed;
+  }
+
+  .mdxeditor-dark .cm-sourceView .cm-content {
+    @apply max-w-none;
+  }
+
+  .mdxeditor-dark .cm-sourceView .cm-line {
+    @apply pl-0;
+  }
+
+  .mdxeditor-dark .cm-gutters {
+    display: none !important;
+  }
+
+  .mdxeditor-dark .cm-activeLineGutter,
+  .mdxeditor-dark .cm-activeLine {
+    @apply bg-white/5;
+  }
+
+  .mdxeditor-dark .cm-cursor {
+    @apply border-l-yellow-500;
+  }
+
+  .mdxeditor-dark .cm-selectionBackground,
+  .mdxeditor-dark .cm-focused .cm-selectionBackground,
+  .mdxeditor-dark ::selection {
+    @apply bg-sky-400/30;
+  }
+}

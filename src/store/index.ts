@@ -3,6 +3,8 @@ import { NoteContent, NoteInfo } from '@shared/models'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
 
+export type EditorMode = 'rich-text' | 'source'
+
 const loadNotes = async () => {
   const notes = await getNotes()
 
@@ -14,6 +16,7 @@ const notesAtomAsync = atom<NoteInfo[] | Promise<NoteInfo[]>>(loadNotes())
 export const notesAtom = unwrap(notesAtomAsync, (prev) => prev)
 
 export const selectedNoteIndexAtom = atom<number | null>(0)
+export const editorModeAtom = atom<EditorMode>('rich-text')
 
 const selectedNoteAtomAsync = atom(async (get) => {
   const notes = get(notesAtom)

@@ -13,6 +13,7 @@
   "dependencies": {
     "@mdxeditor/editor": "^1.14.3",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "jotai": "^2.6.1",
     "lodash": "^4.17.21",

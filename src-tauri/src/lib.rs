@@ -138,9 +138,12 @@ fn write_note(title: String, content: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn create_note() -> Result<Option<String>, String> {
+fn create_note(title: Option<String>) -> Result<Option<String>, String> {
     let dir = ensure_root_dir()?;
-    let title = next_untitled_name(&dir)?;
+    let title = match title {
+        Some(title) if !title.trim().is_empty() => title,
+        _ => next_untitled_name(&dir)?,
+    };
     let path = dir.join(format!("{}.md", title));
 
     fs::write(path, "").map_err(|err| err.to_string())?;
@@ -164,6 +167,7 @@ fn delete_note(title: String) -> Result<bool, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             get_notes,
