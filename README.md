@@ -97,9 +97,5 @@ The current project has been verified to build `.app` and `.dmg` on macOS. For W
 ## Notes and Limitations
 
 - Preview mode is intentionally read-only.
-- Image upload inside the editor is currently not configured.
 - macOS release bundles are local builds only unless you add Developer ID signing and notarization.
 
-## License
-
-No license file is currently included in this repository.
