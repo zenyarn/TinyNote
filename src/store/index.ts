@@ -36,7 +36,7 @@ export const workspaceDirectoryAtom = unwrap(workspaceDirectoryAtomAsync, (prev)
 export const notesAtom = unwrap(notesAtomAsync, (prev) => prev)
 
 export const selectedNoteIndexAtom = atom<number | null>(0)
-export const editorModeAtom = atom<EditorMode>('rich-text')
+export const editorModeAtom = atom<EditorMode>('source')
 export const noteNameDialogAtom = atom<NoteNameDialogState | null>(null)
 
 const selectedNoteAtomAsync = atom(async (get) => {
