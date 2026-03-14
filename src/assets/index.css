@@ -196,4 +196,29 @@
   .mdxeditor-dark hr {
     @apply my-8 border-0 border-t border-white/10;
   }
+
+  .mdxeditor-dark table {
+    @apply my-6 w-full border-collapse overflow-hidden rounded-lg border border-white/10 bg-white/[0.02];
+  }
+
+  .mdxeditor-dark thead {
+    @apply bg-white/[0.04];
+  }
+
+  .mdxeditor-dark th,
+  .mdxeditor-dark td {
+    @apply border border-white/10 px-3 py-2 text-sm align-top;
+  }
+
+  .mdxeditor-dark th {
+    @apply font-semibold text-zinc-100;
+  }
+
+  .mdxeditor-dark td {
+    @apply text-zinc-200;
+  }
+
+  .mdxeditor-dark img {
+    @apply my-6 rounded-lg border border-white/10 bg-black/10;
+  }
 }
