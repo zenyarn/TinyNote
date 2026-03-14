@@ -1,19 +1,20 @@
 import {
-  ChangeCodeMirrorLanguage,
-  ConditionalContents,
-  CodeMirrorEditor,
   MDXEditor,
   codeBlockPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
   headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
   quotePlugin,
-  toolbarPlugin
+  thematicBreakPlugin
 } from '@mdxeditor/editor'
+import { CodeBlockEditor } from '@renderer/components/CodeBlockEditor'
 import { MarkdownEditorErrorBoundary } from '@renderer/components/MarkdownEditorErrorBoundary'
 import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
+import { CODE_BLOCK_LANGUAGES } from '@renderer/lib/codeBlockLanguages'
 import { NoteContent } from '@shared/models'
 import { editorModeAtom, saveNoteAtom } from '@renderer/store'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -98,89 +99,26 @@ export const MarkdownEditor = () => {
             headingsPlugin(),
             listsPlugin(),
             quotePlugin(),
+            linkPlugin(),
+            linkDialogPlugin(),
+            thematicBreakPlugin(),
             codeBlockPlugin({
               defaultCodeBlockLanguage: 'text',
               codeBlockEditorDescriptors: [
                 {
                   priority: -10,
                   match: () => true,
-                  Editor: CodeMirrorEditor
+                  Editor: CodeBlockEditor
                 }
               ]
             }),
             codeMirrorPlugin({
-              codeBlockLanguages: {
-                text: 'Plain text',
-                txt: 'Plain text',
-                plaintext: 'Plain text',
-                plain: 'Plain text',
-                js: 'JavaScript',
-                javascript: 'JavaScript',
-                mjs: 'JavaScript (ESM)',
-                cjs: 'JavaScript (CommonJS)',
-                jsx: 'JavaScript (React)',
-                ts: 'TypeScript',
-                typescript: 'TypeScript',
-                tsx: 'TypeScript (React)',
-                json: 'JSON',
-                jsonc: 'JSONC',
-                bash: 'Bash',
-                sh: 'Shell',
-                shell: 'Shell',
-                zsh: 'Zsh',
-                html: 'HTML',
-                css: 'CSS',
-                scss: 'SCSS',
-                less: 'Less',
-                md: 'Markdown',
-                markdown: 'Markdown',
-                yaml: 'YAML',
-                yml: 'YAML',
-                py: 'Python',
-                python: 'Python',
-                rs: 'Rust',
-                rust: 'Rust',
-                go: 'Go',
-                java: 'Java',
-                c: 'C',
-                cpp: 'C++',
-                cxx: 'C++',
-                cc: 'C++',
-                cs: 'C#',
-                csharp: 'C#',
-                php: 'PHP',
-                rb: 'Ruby',
-                ruby: 'Ruby',
-                swift: 'Swift',
-                kt: 'Kotlin',
-                kotlin: 'Kotlin',
-                sql: 'SQL',
-                lua: 'Lua',
-                xml: 'XML',
-                toml: 'TOML',
-                ini: 'INI',
-                dockerfile: 'Dockerfile'
-              }
-            }),
-            toolbarPlugin({
-              toolbarContents: () => (
-                <ConditionalContents
-                  options={[
-                    {
-                      when: (editor) => editor?.editorType === 'codeblock',
-                      contents: () => <ChangeCodeMirrorLanguage />
-                    },
-                    {
-                      fallback: () => null
-                    }
-                  ]}
-                />
-              )
+              codeBlockLanguages: CODE_BLOCK_LANGUAGES
             }),
             markdownShortcutPlugin(),
             diffSourcePlugin({ viewMode: editorMode })
           ]}
-          contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""]'
+          contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""] prose-a:text-sky-300 prose-a:decoration-sky-400/40 prose-a:underline-offset-4 hover:prose-a:text-sky-200 prose-hr:my-8 prose-hr:border-white/10'
         />
       </div>
     </MarkdownEditorErrorBoundary>
