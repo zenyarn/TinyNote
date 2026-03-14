@@ -50,7 +50,7 @@
   }
 
   .mdxeditor-dark .cm-sourceView .cm-scroller {
-    @apply px-8 py-5 text-lg leading-relaxed;
+    @apply px-8 pb-5 pt-14 text-lg leading-relaxed;
   }
 
   .mdxeditor-dark .cm-sourceView .cm-content {
