@@ -24,7 +24,7 @@ export const FloatingNoteTitle = ({ className, ...props }: ComponentProps<'div'>
       <button
         type='button'
         onClick={handleRenameStart}
-        className='pointer-events-auto min-w-[180px] rounded-md border border-white/8 bg-transparent px-4 py-1 text-center text-gray-400 transition hover:border-white/15 hover:bg-white/[0.03] hover:text-zinc-200'
+        className='pointer-events-auto min-w-[180px] rounded-md border border-transparent bg-transparent px-4 py-1 text-center text-gray-400 transition hover:bg-white/[0.03] hover:text-zinc-200'
         title='Rename note'
       >
         {selectedNote.title}
