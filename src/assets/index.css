@@ -117,9 +117,7 @@
   }
 
   .mdxeditor-dark .sp-cm pre,
-  .mdxeditor-dark .sp-cm code,
-  .mdxeditor-dark .sp-cm span,
-  .mdxeditor-dark .sp-cm div {
+  .mdxeditor-dark .sp-cm code {
     color: rgb(244 244 245 / 1);
   }
 
