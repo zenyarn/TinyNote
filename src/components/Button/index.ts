@@ -1,4 +1,5 @@
 export * from './ActionButton'
 export * from './DeleteNoteButton'
 export * from './NewNoteButton'
+export * from './RenameNoteButton'
 export * from './ToggleEditorModeButton'

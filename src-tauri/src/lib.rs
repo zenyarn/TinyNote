@@ -146,9 +146,42 @@ fn create_note(title: Option<String>) -> Result<Option<String>, String> {
     };
     let path = dir.join(format!("{}.md", title));
 
+    if path.exists() {
+        return Err("a note with this title already exists".to_string());
+    }
+
     fs::write(path, "").map_err(|err| err.to_string())?;
 
     Ok(Some(title))
+}
+
+#[tauri::command]
+fn rename_note(title: String, new_title: String) -> Result<Option<String>, String> {
+    let normalized_title = new_title.trim();
+
+    if normalized_title.is_empty() {
+        return Err("note title cannot be empty".to_string());
+    }
+
+    if normalized_title == title {
+        return Ok(None);
+    }
+
+    let current_path = note_path(&title)?;
+
+    if !current_path.exists() {
+        return Err("note not found".to_string());
+    }
+
+    let next_path = note_path(normalized_title)?;
+
+    if next_path.exists() {
+        return Err("a note with this title already exists".to_string());
+    }
+
+    fs::rename(current_path, next_path).map_err(|err| err.to_string())?;
+
+    Ok(Some(normalized_title.to_string()))
 }
 
 #[tauri::command]
@@ -174,6 +207,7 @@ pub fn run() {
             read_note,
             write_note,
             create_note,
+            rename_note,
             delete_note
         ])
         .run(tauri::generate_context!())
