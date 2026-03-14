@@ -59,28 +59,30 @@ const selectedNoteAtomAsync = atom(async (get) => {
 
 export const selectedNoteAtom = unwrap(selectedNoteAtomAsync, (prev) => prev ?? null)
 
-export const saveNoteAtom = atom(null, async (get, set, newContent: NoteContent) => {
+export const saveNoteAtom = atom(
+  null,
+  async (get, set, payload: { title: NoteInfo['title']; content: NoteContent }) => {
   const notes = get(notesAtom)
-  const selectedNote = get(selectedNoteAtom)
 
-  if (!selectedNote || !notes) return
+    if (!notes) return
 
-  await writeNote(selectedNote.title, newContent)
+    await writeNote(payload.title, payload.content)
 
-  set(
-    notesAtom,
-    notes.map((note) => {
-      if (note.title === selectedNote.title) {
-        return {
-          ...note,
-          lastEditTime: Date.now()
+    set(
+      notesAtom,
+      notes.map((note) => {
+        if (note.title === payload.title) {
+          return {
+            ...note,
+            lastEditTime: Date.now()
+          }
         }
-      }
 
-      return note
-    })
-  )
-})
+        return note
+      })
+    )
+  }
+)
 
 export const createEmptyNoteAtom = atom(null, async (get, set, title?: string) => {
   const notes = get(notesAtom)
