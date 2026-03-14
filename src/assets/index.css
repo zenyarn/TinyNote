@@ -219,4 +219,24 @@
   .mdxeditor-dark img {
     @apply my-6 rounded-lg border border-white/10 bg-black/10;
   }
+
+  .mdxeditor-dark [class*='_editImageButton_'] {
+    display: none !important;
+  }
+
+  .mdxeditor-dark [class*='_tableColumnEditorPopoverContent_'],
+  .mdxeditor-dark [class*='_popoverContent_'] {
+    @apply border border-white/10 bg-zinc-800/75 text-zinc-100 shadow-xl backdrop-blur-xl;
+  }
+
+  .mdxeditor-dark [class*='_tableEditor_'] [data-tool-cell='true'] {
+    @apply bg-white/[0.025] text-zinc-400;
+  }
+
+  .mdxeditor-dark [class*='_tableColumnEditorTrigger_'],
+  .mdxeditor-dark [class*='_tableRowEditorTrigger_'],
+  .mdxeditor-dark [class*='_addRowButton_'],
+  .mdxeditor-dark [class*='_addColumnButton_'] {
+    @apply opacity-50 transition-opacity hover:opacity-90;
+  }
 }

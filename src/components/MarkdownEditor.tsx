@@ -15,6 +15,7 @@ import {
 } from '@mdxeditor/editor'
 import { CodeBlockEditor } from '@renderer/components/CodeBlockEditor'
 import { MarkdownEditorErrorBoundary } from '@renderer/components/MarkdownEditorErrorBoundary'
+import { sourceCodeMirrorExtensions } from '@renderer/lib/sourceCodeMirrorExtensions'
 import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 import { CODE_BLOCK_LANGUAGES } from '@renderer/lib/codeBlockLanguages'
 import { NoteContent } from '@shared/models'
@@ -32,6 +33,7 @@ export const MarkdownEditor = () => {
   const { editorRef, selectedNote, handleAutoSaving, handleBlur } = useMarkdownEditor()
   const [markdownWarning, setMarkdownWarning] = useState<string | null>(null)
   const [fallbackMarkdown, setFallbackMarkdown] = useState('')
+  const isPreviewMode = editorMode === 'rich-text'
 
   useEffect(() => {
     if (!selectedNote) {
@@ -98,6 +100,7 @@ export const MarkdownEditor = () => {
           ref={editorRef}
           key={`${selectedNote.title}-${editorMode}`}
           markdown={selectedNote.content}
+          readOnly={isPreviewMode}
           onChange={handleAutoSaving}
           onBlur={handleBlur}
           onError={handleEditorError}
@@ -111,7 +114,8 @@ export const MarkdownEditor = () => {
             tablePlugin(),
             imagePlugin({
               imageUploadHandler,
-              imageAutocompleteSuggestions: []
+              imageAutocompleteSuggestions: [],
+              disableImageResize: true
             }),
             codeBlockPlugin({
               defaultCodeBlockLanguage: 'text',
@@ -127,9 +131,13 @@ export const MarkdownEditor = () => {
               codeBlockLanguages: CODE_BLOCK_LANGUAGES
             }),
             markdownShortcutPlugin(),
-            diffSourcePlugin({ viewMode: editorMode })
+            diffSourcePlugin({
+              viewMode: editorMode,
+              // MDXEditor's types currently conflate CodeMirror and micromark `Extension`.
+              codeMirrorExtensions: sourceCodeMirrorExtensions as never
+            })
           ]}
-          contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""] prose-a:text-sky-300 prose-a:decoration-sky-400/40 prose-a:underline-offset-4 hover:prose-a:text-sky-200 prose-hr:my-8 prose-hr:border-white/10 prose-table:my-6 prose-table:w-full prose-table:table-fixed prose-thead:border-b prose-thead:border-white/10 prose-th:border-white/10 prose-th:bg-white/[0.04] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-td:border-white/10 prose-td:px-3 prose-td:py-2 prose-td:text-sm prose-img:rounded-lg prose-img:border prose-img:border-white/10 prose-img:bg-black/10'
+          contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""] prose-pre:my-6 prose-pre:overflow-x-auto prose-pre:rounded-2xl prose-pre:border prose-pre:border-white/10 prose-pre:bg-black/15 prose-pre:px-5 prose-pre:py-4 prose-pre:text-[0.95rem] prose-pre:shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] prose-a:text-sky-300 prose-a:decoration-sky-400/40 prose-a:underline-offset-4 hover:prose-a:text-sky-200 prose-hr:my-8 prose-hr:border-white/10 prose-table:my-6 prose-table:w-full prose-table:table-fixed prose-thead:border-b prose-thead:border-white/10 prose-th:border-white/10 prose-th:bg-white/[0.04] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-td:border-white/10 prose-td:px-3 prose-td:py-2 prose-td:text-sm prose-img:rounded-lg prose-img:border prose-img:border-white/10 prose-img:bg-black/10'
         />
       </div>
     </MarkdownEditorErrorBoundary>
