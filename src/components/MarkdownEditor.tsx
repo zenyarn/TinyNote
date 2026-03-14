@@ -1,4 +1,7 @@
 import {
+  ChangeCodeMirrorLanguage,
+  ConditionalContents,
+  CodeMirrorEditor,
   MDXEditor,
   codeBlockPlugin,
   codeMirrorPlugin,
@@ -6,7 +9,8 @@ import {
   headingsPlugin,
   listsPlugin,
   markdownShortcutPlugin,
-  quotePlugin
+  quotePlugin,
+  toolbarPlugin
 } from '@mdxeditor/editor'
 import { MarkdownEditorErrorBoundary } from '@renderer/components/MarkdownEditorErrorBoundary'
 import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
@@ -19,17 +23,17 @@ export const MarkdownEditor = () => {
   const editorMode = useAtomValue(editorModeAtom)
   const saveNote = useSetAtom(saveNoteAtom)
   const { editorRef, selectedNote, handleAutoSaving, handleBlur } = useMarkdownEditor()
-  const [markdownError, setMarkdownError] = useState<{ error: string; source: string } | null>(null)
+  const [markdownWarning, setMarkdownWarning] = useState<string | null>(null)
   const [fallbackMarkdown, setFallbackMarkdown] = useState('')
 
   useEffect(() => {
     if (!selectedNote) {
-      setMarkdownError(null)
+      setMarkdownWarning(null)
       setFallbackMarkdown('')
       return
     }
 
-    setMarkdownError(null)
+    setMarkdownWarning(null)
     setFallbackMarkdown(selectedNote.content)
   }, [selectedNote, editorMode])
 
@@ -37,8 +41,7 @@ export const MarkdownEditor = () => {
 
   const handleEditorError = (payload: { error: string; source: string }) => {
     console.error('Markdown processing error:', payload)
-    setMarkdownError(payload)
-    setFallbackMarkdown(payload.source)
+    setMarkdownWarning(payload.error)
   }
 
   const handleFallbackChange = (content: NoteContent) => {
@@ -71,51 +74,115 @@ export const MarkdownEditor = () => {
     </div>
   )
 
-  if (markdownError) {
-    return renderFallback(markdownError.error)
-  }
-
   return (
     <MarkdownEditorErrorBoundary
       resetKey={`${selectedNote.title}-${editorMode}`}
       fallback={(error) => renderFallback(error.message)}
     >
-      <MDXEditor
-        className='dark-theme mdxeditor-dark'
-        ref={editorRef}
-        key={`${selectedNote.title}-${editorMode}`}
-        markdown={selectedNote.content}
-        onChange={handleAutoSaving}
-        onBlur={handleBlur}
-        onError={handleEditorError}
-        plugins={[
-          headingsPlugin(),
-          listsPlugin(),
-          quotePlugin(),
-          codeBlockPlugin({ defaultCodeBlockLanguage: 'text' }),
-          codeMirrorPlugin({
-            codeBlockLanguages: {
-              text: 'Plain text',
-              js: 'JavaScript',
-              jsx: 'JavaScript (React)',
-              ts: 'TypeScript',
-              tsx: 'TypeScript (React)',
-              json: 'JSON',
-              bash: 'Bash',
-              sh: 'Shell',
-              html: 'HTML',
-              css: 'CSS',
-              md: 'Markdown',
-              yaml: 'YAML',
-              py: 'Python',
-              rs: 'Rust'
-            }
-          }),
-          markdownShortcutPlugin(),
-          diffSourcePlugin({ viewMode: editorMode })
-        ]}
-        contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""]'
-      />
+      <div className='relative min-h-full'>
+        {markdownWarning ? (
+          <div className='pointer-events-none absolute inset-x-8 top-14 z-10 rounded-lg border border-amber-400/20 bg-amber-400/10 px-4 py-2 text-sm text-amber-100'>
+            {markdownWarning}
+          </div>
+        ) : null}
+
+        <MDXEditor
+          className='dark-theme mdxeditor-dark'
+          ref={editorRef}
+          key={`${selectedNote.title}-${editorMode}`}
+          markdown={selectedNote.content}
+          onChange={handleAutoSaving}
+          onBlur={handleBlur}
+          onError={handleEditorError}
+          plugins={[
+            headingsPlugin(),
+            listsPlugin(),
+            quotePlugin(),
+            codeBlockPlugin({
+              defaultCodeBlockLanguage: 'text',
+              codeBlockEditorDescriptors: [
+                {
+                  priority: -10,
+                  match: () => true,
+                  Editor: CodeMirrorEditor
+                }
+              ]
+            }),
+            codeMirrorPlugin({
+              codeBlockLanguages: {
+                text: 'Plain text',
+                txt: 'Plain text',
+                plaintext: 'Plain text',
+                plain: 'Plain text',
+                js: 'JavaScript',
+                javascript: 'JavaScript',
+                mjs: 'JavaScript (ESM)',
+                cjs: 'JavaScript (CommonJS)',
+                jsx: 'JavaScript (React)',
+                ts: 'TypeScript',
+                typescript: 'TypeScript',
+                tsx: 'TypeScript (React)',
+                json: 'JSON',
+                jsonc: 'JSONC',
+                bash: 'Bash',
+                sh: 'Shell',
+                shell: 'Shell',
+                zsh: 'Zsh',
+                html: 'HTML',
+                css: 'CSS',
+                scss: 'SCSS',
+                less: 'Less',
+                md: 'Markdown',
+                markdown: 'Markdown',
+                yaml: 'YAML',
+                yml: 'YAML',
+                py: 'Python',
+                python: 'Python',
+                rs: 'Rust',
+                rust: 'Rust',
+                go: 'Go',
+                java: 'Java',
+                c: 'C',
+                cpp: 'C++',
+                cxx: 'C++',
+                cc: 'C++',
+                cs: 'C#',
+                csharp: 'C#',
+                php: 'PHP',
+                rb: 'Ruby',
+                ruby: 'Ruby',
+                swift: 'Swift',
+                kt: 'Kotlin',
+                kotlin: 'Kotlin',
+                sql: 'SQL',
+                lua: 'Lua',
+                xml: 'XML',
+                toml: 'TOML',
+                ini: 'INI',
+                dockerfile: 'Dockerfile'
+              }
+            }),
+            toolbarPlugin({
+              toolbarContents: () => (
+                <ConditionalContents
+                  options={[
+                    {
+                      when: (editor) => editor?.editorType === 'codeblock',
+                      contents: () => <ChangeCodeMirrorLanguage />
+                    },
+                    {
+                      fallback: () => null
+                    }
+                  ]}
+                />
+              )
+            }),
+            markdownShortcutPlugin(),
+            diffSourcePlugin({ viewMode: editorMode })
+          ]}
+          contentEditableClassName='outline-none min-h-screen max-w-none px-8 pb-5 pt-14 text-lg caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[""] prose-code:after:content-[""]'
+        />
+      </div>
     </MarkdownEditorErrorBoundary>
   )
 }

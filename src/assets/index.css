@@ -40,14 +40,111 @@
 @layer components {
   .mdxeditor-dark {
     @apply text-zinc-100;
+    --basePageBg: transparent;
+    --baseBase: rgb(24 24 27 / 0.92);
+    --baseBgSubtle: rgb(39 39 42 / 0.92);
+    --baseBg: rgb(63 63 70 / 0.42);
+    --baseBgHover: rgb(82 82 91 / 0.45);
+    --baseBgActive: rgb(82 82 91 / 0.5);
+    --baseLine: rgb(255 255 255 / 0.1);
+    --baseBorder: rgb(255 255 255 / 0.12);
+    --baseBorderHover: rgb(255 255 255 / 0.18);
+    --baseSolid: rgb(82 82 91 / 1);
+    --baseSolidHover: rgb(113 113 122 / 1);
+    --baseText: rgb(244 244 245 / 1);
+    --baseTextContrast: rgb(255 255 255 / 1);
+    --accentBase: rgb(14 165 233 / 0.1);
+    --accentBgSubtle: rgb(14 165 233 / 0.12);
+    --accentBg: rgb(14 165 233 / 0.18);
+    --accentBgHover: rgb(14 165 233 / 0.24);
+    --accentBgActive: rgb(14 165 233 / 0.3);
+    --accentLine: rgb(56 189 248 / 0.45);
+    --accentBorder: rgb(56 189 248 / 0.4);
+    --accentBorderHover: rgb(56 189 248 / 0.56);
+    --accentSolid: rgb(14 165 233 / 0.9);
+    --accentSolidHover: rgb(56 189 248 / 0.95);
+    --accentText: rgb(186 230 253 / 1);
+    --accentTextContrast: rgb(255 255 255 / 1);
   }
 
   .mdxeditor-dark pre {
-    @apply my-5 overflow-x-auto rounded-lg border border-white/10 bg-zinc-950/80 p-4 text-sm leading-relaxed text-zinc-100;
+    @apply my-5 overflow-x-auto rounded-lg border border-white/10 bg-zinc-900/55 p-4 text-base leading-relaxed text-zinc-100;
   }
 
   .mdxeditor-dark pre code {
     @apply bg-transparent p-0 text-inherit;
+  }
+
+  .mdxeditor-dark [class*='_toolbarRoot_'] {
+    @apply sticky top-0 z-20 flex min-h-0 justify-end border-none bg-transparent px-8 pb-0 pt-14;
+  }
+
+  .mdxeditor-dark [class*='_selectWithLabel_'] {
+    @apply flex items-center gap-2 rounded-md border border-white/10 bg-zinc-900/70 px-3 py-2 text-xs text-zinc-200 backdrop-blur;
+  }
+
+  .mdxeditor-dark [class*='_selectWithLabel_'] label {
+    @apply text-zinc-400;
+  }
+
+  .mdxeditor-dark [class*='_toolbarCodeBlockLanguageSelectTrigger_'],
+  .mdxeditor-dark [class*='_selectTrigger_'] {
+    @apply min-w-[8rem] border border-white/10 bg-white/5 text-zinc-100 shadow-none;
+  }
+
+  .mdxeditor-dark .sp-wrapper,
+  .mdxeditor-dark [class*='_sandpackWrapper_'],
+  .mdxeditor-dark .sp-layout,
+  .mdxeditor-dark .sp-stack,
+  .mdxeditor-dark .sp-code-editor,
+  .mdxeditor-dark .sp-cm {
+    @apply bg-zinc-900/45 text-zinc-100;
+    --sp-colors-surface1: rgb(24 24 27 / 0.5);
+    --sp-colors-surface2: rgb(39 39 42 / 0.62);
+    --sp-colors-surface3: rgb(82 82 91 / 0.22);
+    --sp-colors-base: rgb(244 244 245 / 1);
+    --sp-colors-disabled: rgb(161 161 170 / 0.85);
+    --sp-colors-clickable: rgb(228 228 231 / 0.8);
+    --sp-colors-hover: rgb(244 244 245 / 0.92);
+    --sp-colors-accent: rgb(56 189 248 / 0.9);
+    --sp-syntax-color-plain: rgb(244 244 245 / 1);
+    --sp-syntax-color-comment: rgb(161 161 170 / 0.9);
+    --sp-syntax-color-keyword: rgb(125 211 252 / 0.95);
+    --sp-syntax-color-tag: rgb(245 158 11 / 0.95);
+    --sp-syntax-color-punctuation: rgb(228 228 231 / 0.95);
+    --sp-syntax-color-definition: rgb(134 239 172 / 0.95);
+    --sp-syntax-color-property: rgb(196 181 253 / 0.95);
+    --sp-syntax-color-static: rgb(248 113 113 / 0.92);
+    --sp-syntax-color-string: rgb(196 181 253 / 0.95);
+  }
+
+  .mdxeditor-dark .sp-wrapper {
+    @apply my-5 overflow-hidden rounded-lg border border-white/10 shadow-none;
+  }
+
+  .mdxeditor-dark .sp-cm {
+    @apply text-base leading-relaxed;
+  }
+
+  .mdxeditor-dark .sp-cm pre,
+  .mdxeditor-dark .sp-cm .cm-line {
+    white-space: pre-wrap !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .mdxeditor-dark .sp-cm pre,
+  .mdxeditor-dark .sp-cm code,
+  .mdxeditor-dark .sp-cm span,
+  .mdxeditor-dark .sp-cm div {
+    color: rgb(244 244 245 / 1);
+  }
+
+  .mdxeditor-dark .sp-cm .cm-editor,
+  .mdxeditor-dark .sp-cm .cm-scroller,
+  .mdxeditor-dark .sp-cm .cm-content,
+  .mdxeditor-dark .sp-cm .cm-line {
+    background: transparent !important;
   }
 
   .mdxeditor-dark .cm-editor,
@@ -55,6 +152,16 @@
   .mdxeditor-dark .cm-content,
   .mdxeditor-dark .cm-line {
     @apply bg-transparent text-zinc-100;
+  }
+
+  .mdxeditor-dark .cm-editor {
+    @apply text-base;
+  }
+
+  .mdxeditor-dark .cm-editor .cm-selectionBackground,
+  .mdxeditor-dark .cm-editor.cm-focused .cm-selectionBackground,
+  .mdxeditor-dark .sp-cm .cm-selectionBackground {
+    background: rgb(56 189 248 / 0.18) !important;
   }
 
   .mdxeditor-dark .cm-sourceView .cm-scroller {
@@ -82,9 +189,19 @@
     @apply border-l-yellow-500;
   }
 
+  .mdxeditor-dark .cm-selectionBackground {
+    @apply bg-sky-400/20;
+  }
+
   .mdxeditor-dark .cm-selectionBackground,
   .mdxeditor-dark .cm-focused .cm-selectionBackground,
   .mdxeditor-dark ::selection {
     @apply bg-sky-400/30;
+  }
+
+  .mdxeditor-dark .sp-wrapper ::selection,
+  .mdxeditor-dark .sp-cm ::selection {
+    background: rgb(56 189 248 / 0.24) !important;
+    color: rgb(244 244 245 / 1) !important;
   }
 }
