@@ -65,7 +65,7 @@ const App = () => {
     <>
       <DraggableTopBar />
       <RootLayout ref={rootLayoutRef}>
-        <Sidebar className='shrink-0 p-2' style={{ width: sidebarWidth }}>
+        <Sidebar className='app-sidebar shrink-0 p-2' style={{ width: sidebarWidth }}>
           <div className='px-2 pr-1'>
             <ActionButtonsRow className='mt-0 flex justify-between' />
           </div>
@@ -79,14 +79,14 @@ const App = () => {
           aria-orientation='vertical'
           aria-label='Resize notes sidebar'
           onMouseDown={handleResizeStart}
-          className='group flex w-3 shrink-0 cursor-col-resize items-stretch justify-center bg-transparent'
+          className='app-sidebar-separator group flex w-3 shrink-0 cursor-col-resize items-stretch justify-center bg-transparent'
         >
-          <div className='w-px bg-white/12 transition group-hover:bg-white/25' />
+          <div className='app-sidebar-separator-line w-px bg-white/12 transition group-hover:bg-white/25' />
         </div>
 
         <Content
           ref={contentContainerRef}
-          className='relative min-w-0 bg-zinc-900/50'
+          className='app-content relative min-w-0 bg-zinc-900/50'
         >
           <FloatingNoteTitle className='pt-2' />
           <MarkdownEditor />
