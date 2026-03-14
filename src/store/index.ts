@@ -1,4 +1,13 @@
-import { createNote, deleteNote, getNotes, readNote, renameNote, writeNote } from '@/lib'
+import {
+  chooseWorkspaceDirectory,
+  createNote,
+  deleteNote,
+  getNotes,
+  getWorkspaceDirectory,
+  readNote,
+  renameNote,
+  writeNote
+} from '@/lib'
 import { NoteContent, NoteInfo } from '@shared/models'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
@@ -20,8 +29,10 @@ const loadNotes = async () => {
   return notes.sort((a, b) => b.lastEditTime - a.lastEditTime)
 }
 
+const workspaceDirectoryAtomAsync = atom<string | Promise<string>>(getWorkspaceDirectory())
 const notesAtomAsync = atom<NoteInfo[] | Promise<NoteInfo[]>>(loadNotes())
 
+export const workspaceDirectoryAtom = unwrap(workspaceDirectoryAtomAsync, (prev) => prev ?? '')
 export const notesAtom = unwrap(notesAtomAsync, (prev) => prev)
 
 export const selectedNoteIndexAtom = atom<number | null>(0)
@@ -35,6 +46,8 @@ const selectedNoteAtomAsync = atom(async (get) => {
   if (selectedNoteIndex == null || !notes) return null
 
   const selectedNote = notes[selectedNoteIndex]
+
+  if (!selectedNote) return null
 
   const noteContent = await readNote(selectedNote.title)
 
@@ -86,6 +99,18 @@ export const createEmptyNoteAtom = atom(null, async (get, set, title?: string) =
   set(notesAtom, [newNote, ...notes.filter((note) => note.title !== newNote.title)])
   set(selectedNoteIndexAtom, 0)
   set(noteNameDialogAtom, null)
+})
+
+export const selectWorkspaceDirectoryAtom = atom(null, async (_get, set) => {
+  const workspaceDirectory = await chooseWorkspaceDirectory()
+
+  if (!workspaceDirectory) return
+
+  const notes = await loadNotes()
+
+  set(workspaceDirectoryAtom, workspaceDirectory)
+  set(notesAtom, notes)
+  set(selectedNoteIndexAtom, notes.length > 0 ? 0 : null)
 })
 
 export const renameSelectedNoteAtom = atom(null, async (get, set, newTitle: string) => {

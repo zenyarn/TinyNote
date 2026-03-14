@@ -1,5 +1,5 @@
-use dirs::home_dir;
-use serde::Serialize;
+use dirs::{config_dir, home_dir};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::UNIX_EPOCH;
@@ -7,6 +7,7 @@ use std::time::UNIX_EPOCH;
 const APP_DIRECTORY_NAME: &str = "NoteMark";
 const WELCOME_NOTE_FILENAME: &str = "Welcome.md";
 const DEFAULT_NOTE_BASENAME: &str = "Untitled";
+const SETTINGS_FILENAME: &str = "settings.json";
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -15,14 +16,62 @@ struct NoteInfo {
     last_edit_time: u128,
 }
 
-fn root_dir() -> Result<PathBuf, String> {
+#[derive(Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct AppSettings {
+    workspace_dir: Option<String>,
+}
+
+fn default_root_dir() -> Result<PathBuf, String> {
     let home = home_dir().ok_or_else(|| "home directory not found".to_string())?;
 
     Ok(home.join(APP_DIRECTORY_NAME))
 }
 
+fn settings_dir() -> Result<PathBuf, String> {
+    let config = config_dir().ok_or_else(|| "config directory not found".to_string())?;
+    let dir = config.join(APP_DIRECTORY_NAME);
+
+    fs::create_dir_all(&dir).map_err(|err| err.to_string())?;
+
+    Ok(dir)
+}
+
+fn settings_path() -> Result<PathBuf, String> {
+    Ok(settings_dir()?.join(SETTINGS_FILENAME))
+}
+
+fn read_settings() -> Result<AppSettings, String> {
+    let path = settings_path()?;
+
+    if !path.exists() {
+        return Ok(AppSettings::default());
+    }
+
+    let content = fs::read_to_string(path).map_err(|err| err.to_string())?;
+
+    serde_json::from_str(&content).map_err(|err| err.to_string())
+}
+
+fn write_settings(settings: &AppSettings) -> Result<(), String> {
+    let path = settings_path()?;
+    let content = serde_json::to_string_pretty(settings).map_err(|err| err.to_string())?;
+
+    fs::write(path, content).map_err(|err| err.to_string())
+}
+
+fn current_root_dir() -> Result<(PathBuf, bool), String> {
+    let settings = read_settings()?;
+
+    if let Some(workspace_dir) = settings.workspace_dir {
+        return Ok((PathBuf::from(workspace_dir), false));
+    }
+
+    Ok((default_root_dir()?, true))
+}
+
 fn note_path(title: &str) -> Result<PathBuf, String> {
-    Ok(root_dir()?.join(format!("{}.md", title)))
+    Ok(current_root_dir()?.0.join(format!("{}.md", title)))
 }
 
 fn file_last_edit_time(path: &Path) -> Result<u128, String> {
@@ -38,7 +87,7 @@ fn file_last_edit_time(path: &Path) -> Result<u128, String> {
 }
 
 fn ensure_root_dir() -> Result<PathBuf, String> {
-    let dir = root_dir()?;
+    let dir = current_root_dir()?.0;
 
     fs::create_dir_all(&dir).map_err(|err| err.to_string())?;
 
@@ -116,9 +165,13 @@ fn next_untitled_name(dir: &Path) -> Result<String, String> {
 
 #[tauri::command]
 fn get_notes() -> Result<Vec<NoteInfo>, String> {
-    let dir = ensure_root_dir()?;
+    let (dir, is_default_dir) = current_root_dir()?;
 
-    ensure_welcome_note(&dir)?;
+    fs::create_dir_all(&dir).map_err(|err| err.to_string())?;
+
+    if is_default_dir {
+        ensure_welcome_note(&dir)?;
+    }
 
     note_infos_from_dir(&dir)
 }
@@ -153,6 +206,32 @@ fn create_note(title: Option<String>) -> Result<Option<String>, String> {
     fs::write(path, "").map_err(|err| err.to_string())?;
 
     Ok(Some(title))
+}
+
+#[tauri::command]
+fn get_workspace_dir() -> Result<String, String> {
+    Ok(current_root_dir()?.0.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+fn set_workspace_dir(path: String) -> Result<String, String> {
+    let dir = PathBuf::from(path);
+
+    if !dir.exists() {
+        return Err("selected folder does not exist".to_string());
+    }
+
+    if !dir.is_dir() {
+        return Err("selected path is not a folder".to_string());
+    }
+
+    let resolved_dir = fs::canonicalize(dir).map_err(|err| err.to_string())?;
+
+    write_settings(&AppSettings {
+        workspace_dir: Some(resolved_dir.to_string_lossy().to_string()),
+    })?;
+
+    Ok(resolved_dir.to_string_lossy().to_string())
 }
 
 #[tauri::command]
@@ -203,10 +282,12 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            get_workspace_dir,
             get_notes,
             read_note,
             write_note,
             create_note,
+            set_workspace_dir,
             rename_note,
             delete_note
         ])

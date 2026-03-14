@@ -58,7 +58,7 @@ export const NoteNameDialog = () => {
           </h2>
           <p className='mt-1 text-xs text-zinc-400'>
             {dialogState.mode === 'create'
-              ? 'Enter a note name. The file will be created directly in NoteMark.'
+              ? 'Enter a note name. The file will be created in the current knowledge base folder.'
               : 'Update the note title. The markdown file will be renamed in place.'}
           </p>
         </div>
