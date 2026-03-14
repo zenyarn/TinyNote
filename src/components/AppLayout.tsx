@@ -16,7 +16,7 @@ RootLayout.displayName = 'RootLayout'
 export const Sidebar = ({ className, children, ...props }: ComponentProps<'aside'>) => {
   return (
     <aside
-      className={twMerge('w-[250px] mt-7 h-[100vh + 10px] overflow-auto', className)}
+      className={twMerge('mt-7 flex h-[calc(100vh-1.75rem)] w-[250px] flex-col overflow-hidden', className)}
       {...props}
     >
       {children}

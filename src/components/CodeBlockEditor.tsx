@@ -5,10 +5,47 @@ import {
 } from '@mdxeditor/editor'
 import { CODE_BLOCK_LANGUAGES } from '@renderer/lib/codeBlockLanguages'
 
-export const CodeBlockEditor = (props: CodeBlockEditorProps) => {
+type LocalCodeBlockEditorProps = CodeBlockEditorProps & {
+  readOnlyPreview?: boolean
+}
+
+const normalizePreviewCode = (code: string) => {
+  const trimmed = code.replace(/^\n+/, '').replace(/\n+$/, '')
+  const lines = trimmed.split('\n')
+  const indents = lines
+    .filter((line) => line.trim().length > 0)
+    .map((line) => line.match(/^\s*/)?.[0].length ?? 0)
+  const sharedIndent = indents.length > 0 ? Math.min(...indents) : 0
+
+  if (sharedIndent === 0) {
+    return trimmed
+  }
+
+  return lines.map((line) => line.slice(sharedIndent)).join('\n')
+}
+
+export const CodeBlockEditor = (props: LocalCodeBlockEditorProps) => {
   const codeBlock = useCodeBlockEditorContext()
   const currentLanguage = props.language || 'text'
   const languageOptions = Object.entries(CODE_BLOCK_LANGUAGES)
+
+  if (props.readOnlyPreview) {
+    const languageLabel =
+      CODE_BLOCK_LANGUAGES[currentLanguage as keyof typeof CODE_BLOCK_LANGUAGES] ?? currentLanguage
+    const previewCode = normalizePreviewCode(props.code)
+
+    return (
+      <div className='my-5 overflow-hidden rounded-xl border border-white/10 bg-black/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'>
+        <div className='flex items-center justify-between border-b border-white/8 bg-white/[0.025] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-zinc-400'>
+          <span>Code</span>
+          <span>{languageLabel}</span>
+        </div>
+        <pre className='m-0 overflow-x-auto bg-transparent px-1 py-3 text-[15px] leading-7 text-zinc-100'>
+          <code>{previewCode}</code>
+        </pre>
+      </div>
+    )
+  }
 
   return (
     <div className='my-5 overflow-hidden rounded-lg border border-white/10 bg-white/[0.035] backdrop-blur-sm'>

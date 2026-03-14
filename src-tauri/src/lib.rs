@@ -4,7 +4,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::UNIX_EPOCH;
 
-const APP_DIRECTORY_NAME: &str = "NoteMark";
+const APP_DIRECTORY_NAME: &str = "TinyNote";
 const WELCOME_NOTE_FILENAME: &str = "Welcome.md";
 const DEFAULT_NOTE_BASENAME: &str = "Untitled";
 const SETTINGS_FILENAME: &str = "settings.json";

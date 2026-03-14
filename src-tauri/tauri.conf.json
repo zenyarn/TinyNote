@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "NoteMark",
+  "productName": "TinyNote",
   "version": "0.1.0",
-  "identifier": "com.mfyx.notemarktauri",
+  "identifier": "com.mfyx.tinynotetauri",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "NoteMark",
+        "title": "TinyNote",
         "width": 900,
         "height": 670,
         "minWidth": 900,

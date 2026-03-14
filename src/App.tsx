@@ -66,8 +66,12 @@ const App = () => {
       <DraggableTopBar />
       <RootLayout ref={rootLayoutRef}>
         <Sidebar className='shrink-0 p-2' style={{ width: sidebarWidth }}>
-          <ActionButtonsRow className='mt-0 flex justify-between' />
-          <NotePreviewList className='mt-4 space-y-1' onSelect={resetScroll} />
+          <div className='px-2 pr-1'>
+            <ActionButtonsRow className='mt-0 flex justify-between' />
+          </div>
+          <div className='note-list-scroll mt-4 flex-1 overflow-y-auto pl-2 pr-1'>
+            <NotePreviewList className='space-y-1' onSelect={resetScroll} />
+          </div>
         </Sidebar>
 
         <div

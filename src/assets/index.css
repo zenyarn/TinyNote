@@ -35,6 +35,23 @@
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
+
+  .note-list-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .note-list-scroll::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  .note-list-scroll:hover {
+    scrollbar-color: rgb(82 82 91 / 0.9) transparent;
+  }
+
+  .note-list-scroll:hover::-webkit-scrollbar-thumb {
+    @apply bg-[#555];
+  }
 }
 
 @layer components {
@@ -68,11 +85,18 @@
   }
 
   .mdxeditor-dark pre {
-    @apply my-5 overflow-x-auto rounded-lg border border-white/10 bg-zinc-900/55 p-4 text-base leading-relaxed text-zinc-100;
+    @apply my-5 overflow-x-auto rounded-lg border border-white/10 bg-zinc-900/55 px-4 py-3 text-[1.05rem] leading-7 text-zinc-100;
   }
 
   .mdxeditor-dark pre code {
     @apply bg-transparent p-0 text-inherit;
+  }
+
+  .mdxeditor-dark pre code span,
+  .mdxeditor-dark pre code {
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
   }
 
   .mdxeditor-dark .sp-wrapper,
@@ -220,6 +244,12 @@
     @apply my-6 rounded-lg border border-white/10 bg-black/10;
   }
 
+  .mdxeditor-dark p:empty,
+  .mdxeditor-dark p:has(> br:only-child) {
+    @apply my-0 min-h-0;
+    display: none;
+  }
+
   .mdxeditor-dark [class*='_editImageButton_'] {
     display: none !important;
   }
@@ -231,6 +261,18 @@
 
   .mdxeditor-dark [class*='_tableEditor_'] [data-tool-cell='true'] {
     @apply bg-white/[0.025] text-zinc-400;
+  }
+
+  .mdxeditor-dark [class*='_tableEditor_'] {
+    table-layout: auto !important;
+  }
+
+  .mdxeditor-dark [class*='_tableEditor_'] col:last-child {
+    width: 1px !important;
+  }
+
+  .mdxeditor-dark [class*='_tableEditor_'] {
+    @apply overflow-hidden rounded-xl border border-white/10 bg-white/[0.02];
   }
 
   .mdxeditor-dark [class*='_tableColumnEditorTrigger_'],
